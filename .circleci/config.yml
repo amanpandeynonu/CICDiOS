@@ -171,7 +171,7 @@ jobs:
           command: |
             mkdir -p test_output/unit
             xcodebuild \
-              -workspace YourApp.xcworkspace \
+              -workspace YourApp.xcodeproj \
               -scheme YourApp \
               -sdk iphonesimulator \
               -destination 'platform=iOS Simulator,name=iPhone 11,OS=26.2' \
@@ -207,26 +207,26 @@ jobs:
       - checkout
 
       # Reuse same caches for speed
-      - restore_cache:
-          keys:
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}
-            - v1-ios-deps-
+      # - restore_cache:
+      #     keys:
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}
+      #       - v1-ios-deps-
 
-      - run:
-          name: Install Ruby & iOS Dependencies
-          command: |
-            gem install bundler
-            bundle config set path 'vendor/bundle'
-            bundle install --jobs=4 --retry=3
-            bundle exec pod install
+      # - run:
+      #     name: Install Ruby & iOS Dependencies
+      #     command: |
+      #       gem install bundler
+      #       bundle config set path 'vendor/bundle'
+      #       bundle install --jobs=4 --retry=3
+      #       bundle exec pod install
 
       - run:
           name: Run UI Tests — iPhone 11 (26.2)
           command: |
             mkdir -p test_output/ui_iphone
             xcodebuild \
-              -workspace YourApp.xcworkspace \
+              -workspace YourApp.xcodeproj \
               -scheme YourAppUITests \
               -sdk iphonesimulator \
               -destination 'platform=iOS Simulator,name=iPhone 11,OS=26.2' \
@@ -253,26 +253,26 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}
-            - v1-ios-deps-
+      # - restore_cache:
+      #     keys:
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}
+      #       - v1-ios-deps-
 
-      - run:
-          name: Install Ruby & iOS Dependencies
-          command: |
-            gem install bundler
-            bundle config set path 'vendor/bundle'
-            bundle install --jobs=4 --retry=3
-            bundle exec pod install
+      # - run:
+      #     name: Install Ruby & iOS Dependencies
+      #     command: |
+      #       gem install bundler
+      #       bundle config set path 'vendor/bundle'
+      #       bundle install --jobs=4 --retry=3
+      #       bundle exec pod install
 
       - run:
           name: Run UI Tests — iPad Air 11-inch (M3)
           command: |
             mkdir -p test_output/ui_ipad
             xcodebuild \
-              -workspace YourApp.xcworkspace \
+              -workspace YourApp.xcodeproj \
               -scheme YourAppUITests \
               -sdk iphonesimulator \
               -destination 'platform=iOS Simulator,name=iPad Air 11-inch (M3),OS=26.2' \
