@@ -1,0 +1,281 @@
+version: 2.1
+
+#jobs:
+# build:
+#    macos:
+#      xcode: "13.2.1"          # Xcode image to use on CircleCI
+#
+#    environment:
+#      FL_OUTPUT_DIR: output    # Where Fastlane or other scripts can drop artifacts
+#
+#    steps:
+#      # 1) Get your code
+#      - checkout
+#
+#      # 2) Restore caches (if available)
+#      #    Try to restore Pods + vendor/bundle based on checksums
+#      - restore_cache:
+#          keys:
+#            # Exact match: Podfile.lock + Gemfile.lock
+#            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+#            # Fallback: only Podfile.lock
+#            - v1-ios-deps-{{ checksum "Podfile.lock" }}
+#            # Fallback: any previous cache with same prefix
+#            - v1-ios-deps-
+#
+#      # 3) Install Ruby & iOS dependencies
+#      - run:
+#          name: Install Ruby & iOS Dependencies
+#          command: |
+#            gem install bundler
+#            bundle config set path 'vendor/bundle'
+#            bundle install --jobs=4 --retry=3
+#            bundle exec pod install
+#
+#      # 4) Save caches for future runs
+#      - save_cache:
+#          paths:
+#            - vendor/bundle
+#            - Pods
+#          key: v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+#
+#      # 5) Build app for iOS Simulator
+#      - run:
+#          name: Build (Debug, iOS Simulator)
+#          command: |
+#            xcodebuild \
+#              -workspace YourApp.xcworkspace \
+#              -scheme YourApp \
+#              -sdk iphonesimulator \
+#              -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
+#              clean build
+#
+#      # 6) Run tests and generate result bundle
+#      - run:
+#          name: Run Tests
+#          command: |
+#            mkdir -p test_output
+#            xcodebuild \
+#              -workspace YourApp.xcworkspace \
+#              -scheme YourApp \
+#              -sdk iphonesimulator \
+#              -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
+#              -resultBundlePath test_output/YourAppTests.xcresult \
+#              test
+#
+#      # 7) (Optional) Convert .xcresult to JUnit XML for better test reporting
+#      #    Requires xcpretty or other tools – can be added later if you want
+#      #    For now we just store the raw .xcresult in test_output.
+#      #    Example placeholder:
+#      # - run:
+#      #     name: Convert xcresult to JUnit XML
+#      #     command: |
+#      #       mkdir -p test_output/junit
+#      #       # put your conversion script/command here
+#
+#      # 8) Upload test results to CircleCI Test Summary
+#      - store_test_results:
+#          path: test_output
+#
+#      # 9) Collect artifacts (e.g., logs, build products, screenshots, Fastlane output)
+#      - run:
+#          name: Collect Artifacts
+#          command: |
+#            mkdir -p output
+#            # Example: copy interesting things into output/
+#            # cp -R build/YourApp.build output/build || true
+#            # cp -R fastlane/test_output output/fastlane || true
+#            # cp -R test_output output/tests || true
+#
+#      - store_artifacts:
+#          path: output
+#          destination: build_artifacts
+#
+          
+#version: 2.1
+
+jobs:
+  # -----------------------------
+  # 1) Build + Lint + Unit tests
+  # -----------------------------
+  build_and_unit_tests:
+    macos:
+      xcode: "13.2.1"
+
+    environment:
+      FL_OUTPUT_DIR: output
+
+    steps:
+      - checkout
+
+      # Restore dependency caches (Pods + Bundler)
+      - restore_cache:
+          keys:
+            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+            - v1-ios-deps-{{ checksum "Podfile.lock" }}
+            - v1-ios-deps-
+
+      - run:
+          name: Install Ruby & iOS Dependencies
+          command: |
+            gem install bundler
+            bundle config set path 'vendor/bundle'
+            bundle install --jobs=4 --retry=3
+            bundle exec pod install
+
+      - save_cache:
+          paths:
+            - vendor/bundle
+            - Pods
+          key: v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: Step 1 — Lint code
+          command: swiftlint
+
+      - run:
+          name: Step 2 — Run Unit Tests
+          command: |
+            mkdir -p test_output/unit
+            xcodebuild \
+              -workspace YourApp.xcworkspace \
+              -scheme YourApp \
+              -sdk iphonesimulator \
+              -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
+              -resultBundlePath test_output/unit/UnitTests.xcresult \
+              test
+
+      - run:
+          name: Step 3 — Upload artifacts via Fastlane (optional)
+          command: |
+            mkdir -p output
+            # Your lane might build artifacts / upload to TestFlight, etc.
+            # fastlane upload_artifacts
+            echo "Fastlane upload_artifacts would run here"
+
+      - store_test_results:
+          path: test_output
+
+      - store_artifacts:
+          path: output
+          destination: build_and_unit_artifacts
+
+  # -----------------------------
+  # 2) UI tests on iPhone
+  # -----------------------------
+  ui_tests_iphone:
+    macos:
+      xcode: "13.2.1"
+
+    environment:
+      FL_OUTPUT_DIR: output
+
+    steps:
+      - checkout
+
+      # Reuse same caches for speed
+      - restore_cache:
+          keys:
+            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+            - v1-ios-deps-{{ checksum "Podfile.lock" }}
+            - v1-ios-deps-
+
+      - run:
+          name: Install Ruby & iOS Dependencies
+          command: |
+            gem install bundler
+            bundle config set path 'vendor/bundle'
+            bundle install --jobs=4 --retry=3
+            bundle exec pod install
+
+      - run:
+          name: Run UI Tests — iPhone 12 (15.2)
+          command: |
+            mkdir -p test_output/ui_iphone
+            xcodebuild \
+              -workspace YourApp.xcworkspace \
+              -scheme YourAppUITests \
+              -sdk iphonesimulator \
+              -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
+              -resultBundlePath test_output/ui_iphone/UITests_iPhone.xcresult \
+              test
+
+      - store_test_results:
+          path: test_output
+
+      - store_artifacts:
+          path: test_output
+          destination: ui_tests_iphone_results
+
+  # -----------------------------
+  # 3) UI tests on iPad
+  # -----------------------------
+  ui_tests_ipad:
+    macos:
+      xcode: "13.2.1"
+
+    environment:
+      FL_OUTPUT_DIR: output
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+            - v1-ios-deps-{{ checksum "Podfile.lock" }}
+            - v1-ios-deps-
+
+      - run:
+          name: Install Ruby & iOS Dependencies
+          command: |
+            gem install bundler
+            bundle config set path 'vendor/bundle'
+            bundle install --jobs=4 --retry=3
+            bundle exec pod install
+
+      - run:
+          name: Run UI Tests — iPad (15.2)
+          command: |
+            mkdir -p test_output/ui_ipad
+            xcodebuild \
+              -workspace YourApp.xcworkspace \
+              -scheme YourAppUITests \
+              -sdk iphonesimulator \
+              -destination 'platform=iOS Simulator,name=iPad (9th generation),OS=15.2' \
+              -resultBundlePath test_output/ui_ipad/UITests_iPad.xcresult \
+              test
+
+      - store_test_results:
+          path: test_output
+
+      - store_artifacts:
+          path: test_output
+          destination: ui_tests_ipad_results
+
+# -----------------------------
+# Workflows: orchestrate jobs
+# -----------------------------
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      # Run build + unit tests first
+      - build_and_unit_tests
+
+      # UI jobs depend on build_and_unit_tests
+      - ui_tests_iphone:
+          requires:
+            - build_and_unit_tests
+
+      - ui_tests_ipad:
+          requires:
+            - build_and_unit_tests
+
+
+#workflows:
+#  version: 2
+#  build_and_test:
+#    jobs:
+#      - build
+
