@@ -127,13 +127,13 @@ workflows:
           
 # version: 2.1
 
-# jobs:
-#   # -----------------------------
-#   # 1) Build + Lint + Unit tests
-#   # -----------------------------
-#   build_and_unit_tests:
-#     macos:
-#       xcode: "13.2.1"
+jobs:
+  # -----------------------------
+  # 1) Build + Lint + Unit tests
+  # -----------------------------
+  build_and_unit_tests:
+    macos:
+      xcode: "26.2"
 
 #     environment:
 #       FL_OUTPUT_DIR: output
@@ -141,160 +141,160 @@ workflows:
 #     steps:
 #       - checkout
 
-#       # Restore dependency caches (Pods + Bundler)
-#       - restore_cache:
-#           keys:
-#             - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-#             - v1-ios-deps-{{ checksum "Podfile.lock" }}
-#             - v1-ios-deps-
 
-#       - run:
-#           name: Install Ruby & iOS Dependencies
-#           command: |
-#             gem install bundler
-#             bundle config set path 'vendor/bundle'
-#             bundle install --jobs=4 --retry=3
-#             bundle exec pod install
+      # Restore dependency caches (Pods + Bundler)
+      # - restore_cache:
+      #     keys:
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}
+      #       - v1-ios-deps-
 
-#       - save_cache:
-#           paths:
-#             - vendor/bundle
-#             - Pods
-#           key: v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+      # - run:
+      #     name: Install Ruby & iOS Dependencies
+      #     command: |
+      #       gem install bundler
+      #       bundle config set path 'vendor/bundle'
+      #       bundle install --jobs=4 --retry=3
+      #       bundle exec pod install
 
-#       - run:
-#           name: Step 1 — Lint code
-#           command: swiftlint
+      # - save_cache:
+      #     paths:
+      #       - vendor/bundle
+      #       - Pods
+      #     key: v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
 
-#       - run:
-#           name: Step 2 — Run Unit Tests
-#           command: |
-#             mkdir -p test_output/unit
-#             xcodebuild \
-#               -workspace YourApp.xcworkspace \
-#               -scheme YourApp \
-#               -sdk iphonesimulator \
-#               -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
-#               -resultBundlePath test_output/unit/UnitTests.xcresult \
-#               test
+      # - run:
+      #     name: Step 1 — Lint code
+      #     command: swiftlint
 
-#       - run:
-#           name: Step 3 — Upload artifacts via Fastlane (optional)
-#           command: |
-#             mkdir -p output
-#             # Your lane might build artifacts / upload to TestFlight, etc.
-#             # fastlane upload_artifacts
-#             echo "Fastlane upload_artifacts would run here"
+      - run:
+          name: Step 2 — Run Unit Tests
+          command: |
+            mkdir -p test_output/unit
+            xcodebuild \
+              -project TestCaseDemo.xcodeproj \
+              -scheme TestCaseDemo \
+              -sdk iphonesimulator \
+              -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.6' \
+              -resultBundlePath test_output/unit/UnitTests.xcresult \
+              test
 
-#       - store_test_results:
-#           path: test_output
+      - run:
+          name: Step 3 — Upload artifacts via Fastlane (optional)
+          command: |
+            mkdir -p output
+            # Your lane might build artifacts / upload to TestFlight, etc.
+            # fastlane upload_artifacts
+            echo "Fastlane upload_artifacts would run here"
 
-#       - store_artifacts:
-#           path: output
-#           destination: build_and_unit_artifacts
+      - store_test_results:
+          path: test_output
 
-#   # -----------------------------
-#   # 2) UI tests on iPhone
-#   # -----------------------------
-#   ui_tests_iphone:
-#     macos:
-#       xcode: "13.2.1"
+      - store_artifacts:
+          path: output
+          destination: build_and_unit_artifacts
 
-#     environment:
-#       FL_OUTPUT_DIR: output
+  # -----------------------------
+  # 2) UI tests on iPhone
+  # -----------------------------
+  ui_tests_iphone:
+    macos:
+      xcode: "26.2"
 
+    environment:
+      FL_OUTPUT_DIR: output
 #     steps:
 #       - checkout
 
-#       # Reuse same caches for speed
-#       - restore_cache:
-#           keys:
-#             - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-#             - v1-ios-deps-{{ checksum "Podfile.lock" }}
-#             - v1-ios-deps-
 
-#       - run:
-#           name: Install Ruby & iOS Dependencies
-#           command: |
-#             gem install bundler
-#             bundle config set path 'vendor/bundle'
-#             bundle install --jobs=4 --retry=3
-#             bundle exec pod install
+      # Reuse same caches for speed
+      # - restore_cache:
+      #     keys:
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}
+      #       - v1-ios-deps-
 
-#       - run:
-#           name: Run UI Tests — iPhone 12 (15.2)
-#           command: |
-#             mkdir -p test_output/ui_iphone
-#             xcodebuild \
-#               -workspace YourApp.xcworkspace \
-#               -scheme YourAppUITests \
-#               -sdk iphonesimulator \
-#               -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
-#               -resultBundlePath test_output/ui_iphone/UITests_iPhone.xcresult \
-#               test
+      # - run:
+      #     name: Install Ruby & iOS Dependencies
+      #     command: |
+      #       gem install bundler
+      #       bundle config set path 'vendor/bundle'
+      #       bundle install --jobs=4 --retry=3
+      #       bundle exec pod install
 
-#       - store_test_results:
-#           path: test_output
+      - run:
+          name: Run UI Tests — iPhone 16 (18.6)
+          command: |
+            mkdir -p test_output/ui_iphone
+            xcodebuild \
+              -project TestCaseDemo.xcodeproj \
+              -scheme TestCaseDemo \
+              -sdk iphonesimulator \
+              -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.6' \
+              -resultBundlePath test_output/ui_iphone/UITests_iPhone.xcresult \
+              test
 
-#       - store_artifacts:
-#           path: test_output
-#           destination: ui_tests_iphone_results
+      - store_test_results:
+          path: test_output
 
-#   # -----------------------------
-#   # 3) UI tests on iPad
-#   # -----------------------------
-#   ui_tests_ipad:
-#     macos:
-#       xcode: "13.2.1"
+      - store_artifacts:
+          path: test_output
+          destination: ui_tests_iphone_results
 
-#     environment:
-#       FL_OUTPUT_DIR: output
+  # -----------------------------
+  # 3) UI tests on iPad
+  # -----------------------------
+  ui_tests_ipad:
+    macos:
+      xcode: "26.2"
 
+    environment:
+      FL_OUTPUT_DIR: output
 #     steps:
 #       - checkout
 
-#       - restore_cache:
-#           keys:
-#             - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-#             - v1-ios-deps-{{ checksum "Podfile.lock" }}
-#             - v1-ios-deps-
+      # - restore_cache:
+      #     keys:
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}
+      #       - v1-ios-deps-
 
-#       - run:
-#           name: Install Ruby & iOS Dependencies
-#           command: |
-#             gem install bundler
-#             bundle config set path 'vendor/bundle'
-#             bundle install --jobs=4 --retry=3
-#             bundle exec pod install
+      # - run:
+      #     name: Install Ruby & iOS Dependencies
+      #     command: |
+      #       gem install bundler
+      #       bundle config set path 'vendor/bundle'
+      #       bundle install --jobs=4 --retry=3
+      #       bundle exec pod install
 
-#       - run:
-#           name: Run UI Tests — iPad (15.2)
-#           command: |
-#             mkdir -p test_output/ui_ipad
-#             xcodebuild \
-#               -workspace YourApp.xcworkspace \
-#               -scheme YourAppUITests \
-#               -sdk iphonesimulator \
-#               -destination 'platform=iOS Simulator,name=iPad (9th generation),OS=15.2' \
-#               -resultBundlePath test_output/ui_ipad/UITests_iPad.xcresult \
-#               test
+      - run:
+          name: Run UI Tests — iPad Air 11-inch (M3)
+          command: |
+            mkdir -p test_output/ui_ipad
+            xcodebuild \
+              -project TestCaseDemo.xcodeproj \
+              -scheme TestCaseDemo \
+              -sdk iphonesimulator \
+              -destination 'platform=iOS Simulator,name=iPad Air 11-inch (M3),OS=26.2' \
+              -resultBundlePath test_output/ui_ipad/UITests_iPad.xcresult \
+              test
 
-#       - store_test_results:
-#           path: test_output
+      - store_test_results:
+          path: test_output
 
-#       - store_artifacts:
-#           path: test_output
-#           destination: ui_tests_ipad_results
+      - store_artifacts:
+          path: test_output
+          destination: ui_tests_ipad_results
 
-# # -----------------------------
-# # Workflows: orchestrate jobs
-# # -----------------------------
-# workflows:
-#   version: 2
-#   build_and_test:
-#     jobs:
-#       # Run build + unit tests first
-#       - build_and_unit_tests
+# -----------------------------
+# Workflows: orchestrate jobs
+# -----------------------------
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      # Run build + unit tests first
+      - build_and_unit_tests
 
 #       # UI jobs depend on build_and_unit_tests
 #       - ui_tests_iphone:
