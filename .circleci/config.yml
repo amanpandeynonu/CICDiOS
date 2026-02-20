@@ -133,7 +133,7 @@ jobs:
   # -----------------------------
   build_and_unit_tests:
     macos:
-      xcode: "13.2.1"
+      xcode: "26.2"
 
     environment:
       FL_OUTPUT_DIR: output
@@ -174,7 +174,7 @@ jobs:
               -workspace YourApp.xcworkspace \
               -scheme YourApp \
               -sdk iphonesimulator \
-              -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
+              -destination 'platform=iOS Simulator,name=iPhone 11,OS=26.2' \
               -resultBundlePath test_output/unit/UnitTests.xcresult \
               test
 
@@ -198,7 +198,7 @@ jobs:
   # -----------------------------
   ui_tests_iphone:
     macos:
-      xcode: "13.2.1"
+      xcode: "26.2"
 
     environment:
       FL_OUTPUT_DIR: output
@@ -222,14 +222,14 @@ jobs:
             bundle exec pod install
 
       - run:
-          name: Run UI Tests — iPhone 12 (15.2)
+          name: Run UI Tests — iPhone 11 (26.2)
           command: |
             mkdir -p test_output/ui_iphone
             xcodebuild \
               -workspace YourApp.xcworkspace \
               -scheme YourAppUITests \
               -sdk iphonesimulator \
-              -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
+              -destination 'platform=iOS Simulator,name=iPhone 11,OS=26.2' \
               -resultBundlePath test_output/ui_iphone/UITests_iPhone.xcresult \
               test
 
@@ -245,7 +245,7 @@ jobs:
   # -----------------------------
   ui_tests_ipad:
     macos:
-      xcode: "13.2.1"
+      xcode: "26.2"
 
     environment:
       FL_OUTPUT_DIR: output
@@ -268,14 +268,14 @@ jobs:
             bundle exec pod install
 
       - run:
-          name: Run UI Tests — iPad (15.2)
+          name: Run UI Tests — iPad Air 11-inch (M3)
           command: |
             mkdir -p test_output/ui_ipad
             xcodebuild \
               -workspace YourApp.xcworkspace \
               -scheme YourAppUITests \
               -sdk iphonesimulator \
-              -destination 'platform=iOS Simulator,name=iPad (9th generation),OS=15.2' \
+              -destination 'platform=iOS Simulator,name=iPad Air 11-inch (M3),OS=26.2' \
               -resultBundlePath test_output/ui_ipad/UITests_iPad.xcresult \
               test
 
