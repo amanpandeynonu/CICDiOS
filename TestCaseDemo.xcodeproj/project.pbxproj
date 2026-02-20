@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		045947D92F48752000444C3B /* SecondVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045947D82F48752000444C3B /* SecondVC.swift */; };
+		045947DA2F48752000444C3B /* SecondVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045947D82F48752000444C3B /* SecondVC.swift */; };
+		045947DB2F48752000444C3B /* SecondVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045947D82F48752000444C3B /* SecondVC.swift */; };
 		8648598825941148000D0C8B /* LoginValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8648598725941148000D0C8B /* LoginValidation.swift */; };
 		8648598E25941175000D0C8B /* ValidationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8648598D25941175000D0C8B /* ValidationResponse.swift */; };
 		86485994259411D7000D0C8B /* LoginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86485993259411D7000D0C8B /* LoginRequest.swift */; };
@@ -44,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		045947D82F48752000444C3B /* SecondVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SecondVC.swift; path = TestCaseDemo/SecondVC.swift; sourceTree = SOURCE_ROOT; };
 		8648598725941148000D0C8B /* LoginValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginValidation.swift; sourceTree = "<group>"; };
 		8648598D25941175000D0C8B /* ValidationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationResponse.swift; sourceTree = "<group>"; };
 		86485993259411D7000D0C8B /* LoginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequest.swift; sourceTree = "<group>"; };
@@ -190,6 +194,7 @@
 				864859A125941659000D0C8B /* DataResource */,
 				8648598625941135000D0C8B /* Validation */,
 				86EB5BE22592C3BD001A3DA4 /* AppDelegate.swift */,
+				045947D82F48752000444C3B /* SecondVC.swift */,
 				86EB5BE42592C3BD001A3DA4 /* SceneDelegate.swift */,
 				86EB5BE62592C3BD001A3DA4 /* ViewController.swift */,
 				86EB5BE82592C3BD001A3DA4 /* Main.storyboard */,
@@ -359,6 +364,7 @@
 				864859A32594166B000D0C8B /* LoginApiResource.swift in Sources */,
 				86EB5BE52592C3BD001A3DA4 /* SceneDelegate.swift in Sources */,
 				8648598E25941175000D0C8B /* ValidationResponse.swift in Sources */,
+				045947D92F48752000444C3B /* SecondVC.swift in Sources */,
 				8648599D25941278000D0C8B /* LoginResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -368,6 +374,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				864859DF2594FD1F000D0C8B /* LoginValidationUnitTests.swift in Sources */,
+				045947DA2F48752000444C3B /* SecondVC.swift in Sources */,
 				86EB5BFA2592C3BE001A3DA4 /* TestCaseDemoTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -376,6 +383,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				045947DB2F48752000444C3B /* SecondVC.swift in Sources */,
 				86EB5C052592C3BE001A3DA4 /* TestCaseDemoUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
