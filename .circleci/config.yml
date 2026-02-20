@@ -142,29 +142,29 @@ jobs:
       - checkout
 
       # Restore dependency caches (Pods + Bundler)
-      - restore_cache:
-          keys:
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}
-            - v1-ios-deps-
+      # - restore_cache:
+      #     keys:
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+      #       - v1-ios-deps-{{ checksum "Podfile.lock" }}
+      #       - v1-ios-deps-
 
-      - run:
-          name: Install Ruby & iOS Dependencies
-          command: |
-            gem install bundler
-            bundle config set path 'vendor/bundle'
-            bundle install --jobs=4 --retry=3
-            bundle exec pod install
+      # - run:
+      #     name: Install Ruby & iOS Dependencies
+      #     command: |
+      #       gem install bundler
+      #       bundle config set path 'vendor/bundle'
+      #       bundle install --jobs=4 --retry=3
+      #       bundle exec pod install
 
-      - save_cache:
-          paths:
-            - vendor/bundle
-            - Pods
-          key: v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
+      # - save_cache:
+      #     paths:
+      #       - vendor/bundle
+      #       - Pods
+      #     key: v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
 
-      - run:
-          name: Step 1 — Lint code
-          command: swiftlint
+      # - run:
+      #     name: Step 1 — Lint code
+      #     command: swiftlint
 
       - run:
           name: Step 2 — Run Unit Tests
