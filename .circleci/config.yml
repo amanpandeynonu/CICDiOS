@@ -171,8 +171,8 @@ jobs:
           command: |
             mkdir -p test_output/unit
             xcodebuild \
-              -workspace YourApp.xcodeproj \
-              -scheme YourApp \
+              -workspace TestCaseDemo.xcodeproj \
+              -scheme TestCaseDemo \
               -sdk iphonesimulator \
               -destination 'platform=iOS Simulator,name=iPhone 11,OS=26.2' \
               -resultBundlePath test_output/unit/UnitTests.xcresult \
@@ -226,8 +226,8 @@ jobs:
           command: |
             mkdir -p test_output/ui_iphone
             xcodebuild \
-              -workspace YourApp.xcodeproj \
-              -scheme YourAppUITests \
+              -workspace TestCaseDemo.xcodeproj \
+              -scheme TestCaseDemoUITests \
               -sdk iphonesimulator \
               -destination 'platform=iOS Simulator,name=iPhone 11,OS=26.2' \
               -resultBundlePath test_output/ui_iphone/UITests_iPhone.xcresult \
@@ -272,8 +272,8 @@ jobs:
           command: |
             mkdir -p test_output/ui_ipad
             xcodebuild \
-              -workspace YourApp.xcodeproj \
-              -scheme YourAppUITests \
+              -workspace TestCaseDemo.xcodeproj \
+              -scheme TestCaseDemoUITests \
               -sdk iphonesimulator \
               -destination 'platform=iOS Simulator,name=iPad Air 11-inch (M3),OS=26.2' \
               -resultBundlePath test_output/ui_ipad/UITests_iPad.xcresult \
