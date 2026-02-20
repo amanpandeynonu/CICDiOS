@@ -174,7 +174,7 @@ jobs:
               -project TestCaseDemo.xcodeproj \
               -scheme TestCaseDemo \
               -sdk iphonesimulator \
-              -destination 'platform=iOS Simulator,name=iPhone 11,OS=26.2' \
+              -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.6' \
               -resultBundlePath test_output/unit/UnitTests.xcresult \
               test
 
@@ -222,14 +222,14 @@ jobs:
       #       bundle exec pod install
 
       - run:
-          name: Run UI Tests — iPhone 11 (26.2)
+          name: Run UI Tests — iPhone 16 (18.6)
           command: |
             mkdir -p test_output/ui_iphone
             xcodebuild \
               -project TestCaseDemo.xcodeproj \
               -scheme TestCaseDemoUITests \
               -sdk iphonesimulator \
-              -destination 'platform=iOS Simulator,name=iPhone 11,OS=26.2' \
+              -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.6' \
               -resultBundlePath test_output/ui_iphone/UITests_iPhone.xcresult \
               test
 
