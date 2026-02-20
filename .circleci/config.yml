@@ -227,7 +227,7 @@ jobs:
             mkdir -p test_output/ui_iphone
             xcodebuild \
               -project TestCaseDemo.xcodeproj \
-              -scheme TestCaseDemoUITests \
+              -scheme TestCaseDemo \
               -sdk iphonesimulator \
               -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.6' \
               -resultBundlePath test_output/ui_iphone/UITests_iPhone.xcresult \
@@ -273,7 +273,7 @@ jobs:
             mkdir -p test_output/ui_ipad
             xcodebuild \
               -project TestCaseDemo.xcodeproj \
-              -scheme TestCaseDemoUITests \
+              -scheme TestCaseDemo \
               -sdk iphonesimulator \
               -destination 'platform=iOS Simulator,name=iPad Air 11-inch (M3),OS=26.2' \
               -resultBundlePath test_output/ui_ipad/UITests_iPad.xcresult \
