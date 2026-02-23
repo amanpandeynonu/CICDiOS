@@ -291,6 +291,50 @@ jobs:
 # -----------------------------
 workflows:
   version: 2
+# 1) Run on commits to any branch (push pipelines)
+  on_branch_push:
+    jobs:
+      - build_test:
+          filters:
+            branches:
+              ignore:
+                - master
+                - dev
+
+  # Also run on commits to develop (optional; remove if you only want PR checks for develop)
+  on_develop_push:
+    jobs:
+      - build_test:
+          filters:
+            branches:
+              only:
+                - dev
+
+  # 2) PR created/updated targeting develop (PR pipelines)
+  on_pr_to_develop:
+    when:
+      # Runs only when CircleCI sees PR metadata and the PR base branch is develop
+      and:
+        - equal: [ "dev", << pipeline.git.base_revision >> ] # fallback (often not reliable)
+    jobs:
+      - build_and_test
+
+  # 3) Before merge to main: run on PRs targeting master (PR pipelines)
+  # 4) After merge to main: run on push to master
+  on_master_pre_and_post:
+    jobs:
+      # Post-merge: push to master
+      - master_post_merge:
+          filters:
+            branches:
+              only:
+                - main
+      # Pre-merge gate: PRs to master
+      - build_test:
+          filters:
+            branches:
+              ignore:
+                - main
   build_and_test:
     jobs:
       # Run build + unit tests first
