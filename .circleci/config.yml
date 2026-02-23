@@ -104,7 +104,7 @@ workflows:
   # A reusable test workflow pattern: Unit -> UI iPhone + UI iPad
   # We will repeat this job chain in multiple workflows.
 
-  # 1) Push to any branch except main/dev
+  # 1) Push to any branch except main/dev/test
   on_branch_push:
     jobs:
       - build_and_unit_tests:
@@ -113,6 +113,7 @@ workflows:
               ignore:
                 - main
                 - dev
+                - test
       - ui_tests_iphone:
           requires: [build_and_unit_tests]
           filters:
@@ -120,6 +121,7 @@ workflows:
               ignore:
                 - main
                 - dev
+                - test
       - ui_tests_ipad:
           requires: [build_and_unit_tests]
           filters:
@@ -127,6 +129,7 @@ workflows:
               ignore:
                 - main
                 - dev
+                - test
 
   # 2) Push to dev branch
   on_develop_push:
@@ -146,6 +149,23 @@ workflows:
             branches:
               only: dev
 
+  on_test_push:
+    jobs:
+      - build_and_unit_tests:
+          filters:
+            branches:
+              only: test
+      - ui_tests_iphone:
+          requires: [build_and_unit_tests]
+          filters:
+            branches:
+              only: test
+      - ui_tests_ipad:
+          requires: [build_and_unit_tests]
+          filters:
+            branches:
+              only: test              
+
   # 2b) PR validation (covers PRs to dev AND PRs to main)
   # CircleCI runs PR pipelines on the *source branch*.
   # You cannot reliably filter by PR target branch in config.yml alone.
@@ -156,6 +176,14 @@ workflows:
           requires: [build_and_unit_tests]
       - ui_tests_ipad:
           requires: [build_and_unit_tests]
+
+  on_pr_to_test:
+    jobs:
+      - build_and_unit_tests
+      - ui_tests_iphone:
+          requires: [build_and_unit_tests]
+      - ui_tests_ipad:
+          requires: [build_and_unit_tests]        
 
   # 3+4) “Before merge to main” is enforced by GitHub branch protection requiring these checks.
   # 4) After merge to main: run post_merge_main only on main pushes
