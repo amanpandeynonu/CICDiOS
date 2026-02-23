@@ -1,241 +1,57 @@
-# # Use the latest 2.1 version of CircleCI pipeline process engine.
-# # See: https://circleci.com/docs/reference/configuration-reference
-# version: 2.1
-
-# # Define a job to be invoked later in a workflow.
-# # See: https://circleci.com/docs/guides/orchestrate/jobs-steps/#jobs-overview & https://circleci.com/docs/reference/configuration-reference/#jobs
-# jobs:
-#   say-hello:
-#     # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-#     # See: https://circleci.com/docs/guides/execution-managed/executor-intro/ & https://circleci.com/docs/reference/configuration-reference/#executor-job
-#     docker:
-#       # Specify the version you desire here
-#       # See: https://circleci.com/developer/images/image/cimg/base
-#       - image: cimg/base:current
-
-#     # Add steps to the job
-#     # See: https://circleci.com/docs/guides/orchestrate/jobs-steps/#steps-overview & https://circleci.com/docs/reference/configuration-reference/#steps
-#     steps:
-#       # Checkout the code as the first step.
-#       - checkout
-#       - run:
-#           name: "Say hello"
-#           command: "echo Hello, World!"
-
-# # Orchestrate jobs using workflows
-# # See: https://circleci.com/docs/guides/orchestrate/workflows/ & https://circleci.com/docs/reference/configuration-reference/#workflows
-# workflows:
-#   say-hello-workflow: # This is the name of the workflow, feel free to change it to better match your workflow.
-#     # Inside the workflow, you define the jobs you want to run.
-#     jobs:
-#       - say-hello
-
 
 version: 2.1
 
-#jobs:
-# build:
-#    macos:
-#      xcode: "13.2.1"          # Xcode image to use on CircleCI
-#
-#    environment:
-#      FL_OUTPUT_DIR: output    # Where Fastlane or other scripts can drop artifacts
-#
-#    steps:
-#      # 1) Get your code
-#      - checkout
-#
-#      # 2) Restore caches (if available)
-#      #    Try to restore Pods + vendor/bundle based on checksums
-#      - restore_cache:
-#          keys:
-#            # Exact match: Podfile.lock + Gemfile.lock
-#            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-#            # Fallback: only Podfile.lock
-#            - v1-ios-deps-{{ checksum "Podfile.lock" }}
-#            # Fallback: any previous cache with same prefix
-#            - v1-ios-deps-
-#
-#      # 3) Install Ruby & iOS dependencies
-#      - run:
-#          name: Install Ruby & iOS Dependencies
-#          command: |
-#            gem install bundler
-#            bundle config set path 'vendor/bundle'
-#            bundle install --jobs=4 --retry=3
-#            bundle exec pod install
-#
-#      # 4) Save caches for future runs
-#      - save_cache:
-#          paths:
-#            - vendor/bundle
-#            - Pods
-#          key: v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-#
-#      # 5) Build app for iOS Simulator
-#      - run:
-#          name: Build (Debug, iOS Simulator)
-#          command: |
-#            xcodebuild \
-#              -workspace YourApp.xcworkspace \
-#              -scheme YourApp \
-#              -sdk iphonesimulator \
-#              -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
-#              clean build
-#
-#      # 6) Run tests and generate result bundle
-#      - run:
-#          name: Run Tests
-#          command: |
-#            mkdir -p test_output
-#            xcodebuild \
-#              -workspace YourApp.xcworkspace \
-#              -scheme YourApp \
-#              -sdk iphonesimulator \
-#              -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
-#              -resultBundlePath test_output/YourAppTests.xcresult \
-#              test
-#
-#      # 7) (Optional) Convert .xcresult to JUnit XML for better test reporting
-#      #    Requires xcpretty or other tools – can be added later if you want
-#      #    For now we just store the raw .xcresult in test_output.
-#      #    Example placeholder:
-#      # - run:
-#      #     name: Convert xcresult to JUnit XML
-#      #     command: |
-#      #       mkdir -p test_output/junit
-#      #       # put your conversion script/command here
-#
-#      # 8) Upload test results to CircleCI Test Summary
-#      - store_test_results:
-#          path: test_output
-#
-#      # 9) Collect artifacts (e.g., logs, build products, screenshots, Fastlane output)
-#      - run:
-#          name: Collect Artifacts
-#          command: |
-#            mkdir -p output
-#            # Example: copy interesting things into output/
-#            # cp -R build/YourApp.build output/build || true
-#            # cp -R fastlane/test_output output/fastlane || true
-#            # cp -R test_output output/tests || true
-#
-#      - store_artifacts:
-#          path: output
-#          destination: build_artifacts
-#
-          
-#version: 2.1
-
 jobs:
   # -----------------------------
-  # 1) Build + Lint + Unit tests
+  # 1) Build + Unit tests
   # -----------------------------
   build_and_unit_tests:
     macos:
-      xcode: "13.2.1"
-
+      xcode: "15.4"   # <-- change to a valid CircleCI Xcode version
     environment:
       FL_OUTPUT_DIR: output
-
     steps:
       - checkout
-
-      # Restore dependency caches (Pods + Bundler)
-      - restore_cache:
-          keys:
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}
-            - v1-ios-deps-
-
       - run:
-          name: Install Ruby & iOS Dependencies
-          command: |
-            gem install bundler
-            bundle config set path 'vendor/bundle'
-            bundle install --jobs=4 --retry=3
-            bundle exec pod install
-
-      - save_cache:
-          paths:
-            - vendor/bundle
-            - Pods
-          key: v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-
-      - run:
-          name: Step 1 — Lint code
-          command: swiftlint
-
-      - run:
-          name: Step 2 — Run Unit Tests
+          name: Run Unit Tests
           command: |
             mkdir -p test_output/unit
             xcodebuild \
-              -workspace YourApp.xcworkspace \
-              -scheme YourApp \
+              -project TestCaseDemo.xcodeproj \
+              -scheme TestCaseDemo \
               -sdk iphonesimulator \
-              -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
+              -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.6' \
               -resultBundlePath test_output/unit/UnitTests.xcresult \
               test
-
-      - run:
-          name: Step 3 — Upload artifacts via Fastlane (optional)
-          command: |
-            mkdir -p output
-            # Your lane might build artifacts / upload to TestFlight, etc.
-            # fastlane upload_artifacts
-            echo "Fastlane upload_artifacts would run here"
-
       - store_test_results:
           path: test_output
-
       - store_artifacts:
-          path: output
-          destination: build_and_unit_artifacts
+          path: test_output
+          destination: unit_test_results
 
   # -----------------------------
   # 2) UI tests on iPhone
   # -----------------------------
   ui_tests_iphone:
     macos:
-      xcode: "13.2.1"
-
+      xcode: "15.4"
     environment:
       FL_OUTPUT_DIR: output
-
     steps:
       - checkout
-
-      # Reuse same caches for speed
-      - restore_cache:
-          keys:
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}
-            - v1-ios-deps-
-
       - run:
-          name: Install Ruby & iOS Dependencies
-          command: |
-            gem install bundler
-            bundle config set path 'vendor/bundle'
-            bundle install --jobs=4 --retry=3
-            bundle exec pod install
-
-      - run:
-          name: Run UI Tests — iPhone 12 (15.2)
+          name: Run UI Tests — iPhone
           command: |
             mkdir -p test_output/ui_iphone
             xcodebuild \
-              -workspace YourApp.xcworkspace \
-              -scheme YourAppUITests \
+              -project TestCaseDemo.xcodeproj \
+              -scheme TestCaseDemo \
               -sdk iphonesimulator \
-              -destination 'platform=iOS Simulator,name=iPhone 12,OS=15.2' \
+              -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.6' \
               -resultBundlePath test_output/ui_iphone/UITests_iPhone.xcresult \
               test
-
       - store_test_results:
           path: test_output
-
       - store_artifacts:
           path: test_output
           destination: ui_tests_iphone_results
@@ -245,69 +61,141 @@ jobs:
   # -----------------------------
   ui_tests_ipad:
     macos:
-      xcode: "13.2.1"
-
+      xcode: "15.4"
     environment:
       FL_OUTPUT_DIR: output
-
     steps:
       - checkout
-
-      - restore_cache:
-          keys:
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}-{{ checksum "Gemfile.lock" }}
-            - v1-ios-deps-{{ checksum "Podfile.lock" }}
-            - v1-ios-deps-
-
       - run:
-          name: Install Ruby & iOS Dependencies
-          command: |
-            gem install bundler
-            bundle config set path 'vendor/bundle'
-            bundle install --jobs=4 --retry=3
-            bundle exec pod install
-
-      - run:
-          name: Run UI Tests — iPad (15.2)
+          name: Run UI Tests — iPad
           command: |
             mkdir -p test_output/ui_ipad
             xcodebuild \
-              -workspace YourApp.xcworkspace \
-              -scheme YourAppUITests \
+              -project TestCaseDemo.xcodeproj \
+              -scheme TestCaseDemo \
               -sdk iphonesimulator \
-              -destination 'platform=iOS Simulator,name=iPad (9th generation),OS=15.2' \
+              -destination 'platform=iOS Simulator,name=iPad Air 11-inch (M3),OS=18.6' \
               -resultBundlePath test_output/ui_ipad/UITests_iPad.xcresult \
               test
-
       - store_test_results:
           path: test_output
-
       - store_artifacts:
           path: test_output
           destination: ui_tests_ipad_results
 
-# -----------------------------
-# Workflows: orchestrate jobs
-# -----------------------------
+  # -----------------------------
+  # 4) Post-merge actions on main
+  # -----------------------------
+  post_merge_main:
+    macos:
+      xcode: "15.4"
+    steps:
+      - checkout
+      - run:
+          name: Post-merge actions (main only)
+          command: |
+            echo "Do your post-merge build/release/deploy steps here"
+            # fastlane release
+            # upload artifacts, publish, deploy, etc.
+
 workflows:
   version: 2
-  build_and_test:
+
+  # A reusable test workflow pattern: Unit -> UI iPhone + UI iPad
+  # We will repeat this job chain in multiple workflows.
+
+  # 1) Push to any branch except main/dev/test
+  on_branch_push:
     jobs:
-      # Run build + unit tests first
-      - build_and_unit_tests
-
-      # UI jobs depend on build_and_unit_tests
+      - build_and_unit_tests:
+          filters:
+            branches:
+              ignore:
+                - main
+                - dev
+                - test
       - ui_tests_iphone:
-          requires:
-            - build_and_unit_tests
-
+          requires: [build_and_unit_tests]
+          filters:
+            branches:
+              ignore:
+                - main
+                - dev
+                - test
       - ui_tests_ipad:
-          requires:
-            - build_and_unit_tests
+          requires: [build_and_unit_tests]
+          filters:
+            branches:
+              ignore:
+                - main
+                - dev
+                - test
 
+  # 2) Push to dev branch
+  on_develop_push:
+    jobs:
+      - build_and_unit_tests:
+          filters:
+            branches:
+              only: dev
+      - ui_tests_iphone:
+          requires: [build_and_unit_tests]
+          filters:
+            branches:
+              only: dev
+      - ui_tests_ipad:
+          requires: [build_and_unit_tests]
+          filters:
+            branches:
+              only: dev
 
-#workflows:
-#  version: 2
-#  build_and_test:
-#    jobs:
-#      - build
+  on_test_push:
+    jobs:
+      - build_and_unit_tests:
+          filters:
+            branches:
+              only: test
+      - ui_tests_iphone:
+          requires: [build_and_unit_tests]
+          filters:
+            branches:
+              only: test
+      - ui_tests_ipad:
+          requires: [build_and_unit_tests]
+          filters:
+            branches:
+              only: test              
+
+  # 2b) PR validation (covers PRs to dev AND PRs to main)
+  # CircleCI runs PR pipelines on the *source branch*.
+  # You cannot reliably filter by PR target branch in config.yml alone.
+  on_pr_to_develop:
+    jobs:
+      - build_and_unit_tests
+      - ui_tests_iphone:
+          requires: [build_and_unit_tests]
+      - ui_tests_ipad:
+          requires: [build_and_unit_tests]
+
+  on_pr_to_test:
+    jobs:
+      - build_and_unit_tests
+      - ui_tests_iphone:
+          requires: [build_and_unit_tests]
+      - ui_tests_ipad:
+          requires: [build_and_unit_tests]        
+
+  # 3+4) “Before merge to main” is enforced by GitHub branch protection requiring these checks.
+  # 4) After merge to main: run post_merge_main only on main pushes
+  on_master_pre_and_post:
+    jobs:
+      - build_and_unit_tests
+      - ui_tests_iphone:
+          requires: [build_and_unit_tests]
+      - ui_tests_ipad:
+          requires: [build_and_unit_tests]
+      - post_merge_main:
+          requires: [ui_tests_iphone, ui_tests_ipad]
+          filters:
+            branches:
+              only: main
